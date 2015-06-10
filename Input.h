@@ -3,13 +3,6 @@
 
 #include "IndependentInclude.h"
 
-typedef unsigned char byte;
-
-struct Point{
-	int x;
-	int y;
-};
-
 class Input
 {
 private:

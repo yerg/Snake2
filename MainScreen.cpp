@@ -1,16 +1,20 @@
 #include "MainScreen.h"
 
+
 void MainScreen::Start(){
 	SDL_Color black={0,0,0};
-	std::wstring sServer, sClient;
-	sServer=L"Запустити сервер";
-	sClient=L"Підключитися";
-	server=graphics->NewImage(sServer,black);
-	client=graphics->NewImage(sClient,black);
+	server=make_shared<Button>(graphics->NewImage(L"Запустити сервер",black),Point(200,200));
+	client=make_shared<Button>(graphics->NewImage(L"Підключитися",black),Point(200,250));
+
+
 }
 
 void MainScreen::Update(){
-	graphics->DrawImage(server,0,200);
-	graphics->DrawImage(client,200,0);
-	graphics->Flip();
+	Draw(server);		// Window makes slowly.
+	Draw(client);		// We will get black window if we move this part into Start().
+	graphics->Flip();	// ...
+
+	
+
 }
+

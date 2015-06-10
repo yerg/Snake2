@@ -7,6 +7,10 @@ void Screen::SetController(Game* game, Input* input, Graphics* graphics)
 	this->graphics = graphics;
 }
 
+void Screen::Draw(shared_ptr<Button> &button) {
+	graphics->DrawImage(button->GetImage(),button->GetPosition().x,button->GetPosition().y);
+}
+
 void Screen::Start()
 {
 

@@ -1,7 +1,9 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <memory>
+#include "IndependentInclude.h"
+#include "Graphics.h"
+#include "GuiElements.h"
 class Game;
 class Input;
 class Graphics;
@@ -12,6 +14,7 @@ protected:
 	Game* game;
 	Input* input;
 	Graphics* graphics;
+	void Draw(shared_ptr<Button> &button);
 public:
 	void SetController(Game* game, Input* input, Graphics* graphics);
 

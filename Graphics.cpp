@@ -114,6 +114,10 @@ bool Graphics::DrawImage(Image* img, int x, int y, int startX, int startY, int s
 	return DrawImage(img,x,y,startX,startY,srcW,srcH,w,h);
 }
 
+void Graphics::DestroyImage(Image* image){
+	SDL_DestroyTexture(image->texture);
+}
+
 void Graphics::GetWindowSize(int &w, int &h){
 	SDL_GetWindowSize(mainWindow, &w, &h);
 }

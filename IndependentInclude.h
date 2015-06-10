@@ -11,5 +11,15 @@
 #include <iostream>
 #include <memory>
 
+typedef unsigned char byte;
+using std::shared_ptr;
+using std::make_shared;
+struct Point{
+	int x;
+	int y;
+	Point(){}
+	Point(int x, int y) : x(x), y(y){}
+};
+
 
 #endif

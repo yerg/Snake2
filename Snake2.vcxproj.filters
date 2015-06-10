@@ -36,6 +36,18 @@
     <ClCompile Include="MainScreen.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="GuiElements.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreen.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectScreen.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerScreen.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndependentInclude.h">
@@ -57,6 +69,18 @@
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="MainScreen.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiElements.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectScreen.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerScreen.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreen.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

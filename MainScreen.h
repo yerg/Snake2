@@ -4,10 +4,10 @@
 #include "IndependentInclude.h"
 #include "Screen.h"
 #include "Game.h"
+#include "GuiElements.h"
 
 class MainScreen : public Screen {
-	Image* server;
-	Image* client;
+	shared_ptr<Button> server, client;
 
 public:
 	void Start();

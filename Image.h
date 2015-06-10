@@ -11,7 +11,6 @@ private:
 	int h;
 public:
 	friend class Graphics;
-
 	int GetWidth();
 	int GetHeight();
 };

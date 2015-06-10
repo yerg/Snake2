@@ -16,14 +16,15 @@ class Game
 private:
 	bool run;
 
-	std::shared_ptr<Graphics> graphics;
-	std::shared_ptr<Input> input;
-	std::shared_ptr<Screen> screen;
-	std::vector<std::shared_ptr<Screen> > 
+	shared_ptr<Graphics> graphics;
+	shared_ptr<Input> input;
+	shared_ptr<Screen> mainScreen, connectScreen, serverScreen, gameScreen, screen;
+	void SetScreen(shared_ptr<Screen> &screen);
 public:
 	Game();
 	int Execute(int width, int height, const char *title);
-	void SetScreen(Screen* screen);
+	void CreateServerMenu(){SetScreen()}
+	void ConnectMenu(){}
 	void Exit();
 };
 
