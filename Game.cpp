@@ -5,13 +5,14 @@ Game::Game()
 	run = true;
 }
 
-int Game::Execute(Screen* startscreen, int width, int height, const char *title)
+int Game::Execute(int width, int height, const char *title)
 {
-	graphics = new Graphics(width, height, title);
-	input = new Input();
-	screen = startscreen;
+	graphics = std::make_shared<Graphics>(width, height, title);
+	input = std::make_shared<Input>();
+	screen = std::make_shared<MainScreen>();
 
-	screen->SetController(this);
+	screen->SetController(this,input.get(),graphics.get());
+
 	this->screen->Start();
 
 	while(run)
@@ -22,34 +23,16 @@ int Game::Execute(Screen* startscreen, int width, int height, const char *title)
 
 	screen->Destroy();
 
-	delete graphics;
-	delete input;
-	delete screen;
 
 	return 0;
-}
-
-Graphics* Game::GetGraphics()
-{
-	return graphics;
-}
-
-Input* Game::GetInput()
-{
-	return input;
-}
-
-Screen* Game::GetScreen()
-{
-	return screen;
 }
 
 void Game::SetScreen(Screen* screen)
 {
 	this->screen->Destroy();
-	delete this->screen;
-	this->screen = screen;
-	this->screen->SetController(this);
+//	delete this->screen;
+	this->screen = std::shared_ptr<Screen>(screen);
+	this->screen->SetController(this,input.get(),graphics.get());
 	this->screen->Start();
 }
 
