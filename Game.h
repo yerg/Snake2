@@ -2,10 +2,10 @@
 #define GAME_H
 
 #include "IndependentInclude.h"
-#include "Graphics.h"
-#include "Input.h"
+//#include "Graphics.h"
+//#include "Input.h"
 #include "Screen.h"
-#include "MainScreen.h"
+#include "MenuScreens.h"
 
 class Graphics;
 class Input;
@@ -23,8 +23,9 @@ private:
 public:
 	Game();
 	int Execute(int width, int height, const char *title);
-	void CreateServerMenu(){SetScreen()}
-	void ConnectMenu(){}
+	void ServerMenu(){SetScreen(serverScreen);}
+	void ConnectMenu(){SetScreen(connectScreen);}
+	void MainMenu(){SetScreen(mainScreen);}
 	void Exit();
 };
 

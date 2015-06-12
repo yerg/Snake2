@@ -20,6 +20,10 @@ public:
 	byte GetPressedKey();
 
 	bool IsExit();
+
+	void StartTextInput();
+	void StopTextInput();
+	bool TextHandle(std::string &s);
 };
 
 #endif

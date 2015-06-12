@@ -7,9 +7,12 @@ Game::Game()
 
 int Game::Execute(int width, int height, const char *title)
 {
-	graphics = std::make_shared<Graphics>(width, height, title);
-	input = std::make_shared<Input>();
-	mainScreen = std::make_shared<MainScreen>();
+	graphics = make_shared<Graphics>(width, height, title);
+	input = make_shared<Input>();
+	mainScreen = make_shared<MainScreen>();
+	connectScreen = make_shared<ConnectScreen>();
+	serverScreen = make_shared<ServerScreen>();
+
 	screen=mainScreen;
 	screen->SetController(this,input.get(),graphics.get());
 

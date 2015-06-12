@@ -11,7 +11,9 @@ public:
 	Point SetPosition(Point p){point=p;}
 	Point GetPosition(){return point;}
 	Point GetSize(){return Point(image->GetWidth(),image->GetHeight());}
+	bool CheckHit(Point &hit){return ( (point.x<=hit.x)&&(point.y<=hit.y)&&(image->GetWidth()+point.x>=hit.x)&&(image->GetHeight()+point.y>=hit.y) );}
 	Image* GetImage(){return image;}
+	void SetImage(Image* i){image=i;}
 };
 
 #endif

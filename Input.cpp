@@ -53,3 +53,41 @@ bool Input::IsExit()
 {
 	return (evt.type == SDL_QUIT || (evt.type == SDL_WINDOWEVENT ? evt.window.event==SDL_WINDOWEVENT_CLOSE : 0) );
 }
+
+void Input::StartTextInput(){
+	SDL_StartTextInput();
+}
+
+void Input::StopTextInput(){
+	SDL_StopTextInput();
+}
+
+bool Input::TextHandle(std::string &s){
+	bool textChanged = false;
+	if( evt.type == SDL_KEYDOWN ) { 
+		//Handle backspace 
+		if( evt.key.keysym.sym == SDLK_BACKSPACE && s.length() > 0 ) 
+		{ 
+			//lop off character 
+			s.pop_back(); 
+			textChanged = true; 
+		}  
+		else if( evt.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL ) 
+		{ 
+			SDL_SetClipboardText( s.c_str() );
+		} 
+		else if( evt.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL ) 
+		{ 
+			s = SDL_GetClipboardText(); 
+			textChanged = true; 
+		} 
+	}
+	if( evt.type == SDL_TEXTINPUT ) 
+	{ 
+		if( !( ( evt.text.text[ 0 ] == 'c' || evt.text.text[ 0 ] == 'C' ) && ( evt.text.text[ 0 ] == 'v' || evt.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) ) 
+		{ 
+			s += evt.text.text; textChanged = true; 
+		} 
+	}
+	return textChanged;
+}

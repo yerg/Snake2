@@ -17,7 +17,7 @@ public:
 	~Graphics();
 	Image* NewImage(char* file);
 	Image* NewImage(char* file, int r, int g, int b);
-	Image* NewImage(std::wstring text, SDL_Color color);
+	Image* NewImage(std::wstring &text, SDL_Color &color, bool fast=false);
 	void DestroyImage(Image* image);
 	bool DrawImage(Image* img, int x, int y);
 	bool DrawImage(Image* img, int x, int y, int startX, int startY, int srcW, int srcH, int w, int h);

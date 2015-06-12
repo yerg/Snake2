@@ -1,20 +1,30 @@
-#include "MainScreen.h"
+#include "MenuScreens.h"
 
 
 void MainScreen::Start(){
 	SDL_Color black={0,0,0};
-	server=make_shared<Button>(graphics->NewImage(L"Запустити сервер",black),Point(200,200));
-	client=make_shared<Button>(graphics->NewImage(L"Підключитися",black),Point(200,250));
-
+	if(!initialized)
+	{
+		InitButton(server,L"Запустити сервер",black,100,200);
+		InitButton(client,L"Підключитися",black,100,250);
+		InitButton(exit,L"Покинути гру",black,100, 300);
+		initialized=true;
+	}
 
 }
 
 void MainScreen::Update(){
-	Draw(server);		// Window makes slowly.
-	Draw(client);		// We will get black window if we move this part into Start().
-	graphics->Flip();	// ...
+	Draw(server);		// Window is made slowly.
+	Draw(client);		// 
+	Draw(exit);			//
+	graphics->Flip();	// We will get black window if we move this part into Start().
 
-	
+	HandleLeftClick();
+}
 
+void MainScreen::LeftClick(){
+	if(server->CheckHit(coords)) game->ServerMenu();
+	else if(client->CheckHit(coords)) game->ConnectMenu();
+	else if(exit->CheckHit(coords)) game->Exit();
 }
 

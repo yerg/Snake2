@@ -57,9 +57,9 @@ Image* Graphics::NewImage(char* file, int r, int g, int b)
 	return image;
 }
 
-Image* Graphics::NewImage(std::wstring text, SDL_Color color){
+Image* Graphics::NewImage(std::wstring &text, SDL_Color &color, bool fast){
 	std::basic_string<Uint16> utext (text.begin(),text.end());
-	SDL_Surface* tmp = TTF_RenderUNICODE_Solid(font, utext.c_str(), color);
+	SDL_Surface* tmp = fast ? TTF_RenderUNICODE_Solid(font, utext.c_str(), color) : TTF_RenderUNICODE_Blended(font, utext.c_str(), color);
 	if( tmp == NULL ) std::cout << std::endl << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError();
 	Image* image = new Image();
 	image->texture = SDL_CreateTextureFromSurface(renderer, tmp);
@@ -124,7 +124,7 @@ void Graphics::GetWindowSize(int &w, int &h){
 
 void Graphics::Flip()
 {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 244, 244, 244, 255);
 	SDL_RenderPresent(renderer);
 	SDL_RenderClear(renderer);
 }
