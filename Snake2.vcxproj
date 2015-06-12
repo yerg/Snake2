@@ -68,7 +68,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Connections.cpp" />
     <ClCompile Include="ConnectScreen.cpp" />
+    <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -77,18 +80,22 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainScreen.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="Connections.h" />
+    <ClInclude Include="Drawer.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameScreen.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GuiElements.h" />
     <ClInclude Include="Image.h" />
-    <ClInclude Include="IndependentInclude.h" />
+    <ClInclude Include="Independent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MenuScreens.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="Server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

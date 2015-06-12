@@ -4,11 +4,14 @@ void ConnectScreen::Start(){
 	SDL_Color black={0,0,0}, grey={50,50,50}, red={200,0,0};
 	if(!initialized)
 	{
-		InitButton(connect,L"Підключення. Введіть IP-адресу сервера:",grey,100,200);
-		InitButton(accept,L"Підключитися",black,100,350);
-		InitButton(back,L"Назад",black,500,350);
-		InitButton(field,L" ", red,105,250);
-		box=make_shared<Button>(graphics->NewImage("img/box.bmp"),Point(100,245));
+		InitButton(connect,L"Підключення. Введіть IP-адресу сервера:",grey,40,200);
+		InitButton(accept,L"Підключитися",black,40,400);
+		InitButton(back,L"Назад",black,500,400);
+		InitButton(field,L" ", red,45,250);
+		box=make_shared<Button>(graphics->NewImage("img/box.bmp"),Point(40,245));
+		InitButton(clear,L"Очистити поле",black,40,300);
+		InitButton(process,L"Намагаємося підключитися...",grey,350,300);
+		InitButton(fail,L"Не вдалося підключитися",grey,350,350);
 		initialized=true;
 	}
 	ReDraw();
@@ -20,32 +23,41 @@ void ConnectScreen::ReDraw(){
 	Draw(back);
 	Draw(box);
 	Draw(field);
+	Draw(clear);
+	Draw(fail);
+	Draw(process);
 	graphics->Flip();
 }
 void ConnectScreen::Update(){
-	SDL_Color red={200,0,0};
 	HandleLeftClick();
-	if(input->TextHandle(ipString))
-	{
-		graphics->DestroyImage(field->GetImage());
-		if (!ipString.empty())
-		{
-			temp.assign(ipString.begin(),ipString.end());
-		}
-		else
-		{
-			temp.assign(L" ");
-		}
-		field->SetImage(graphics->NewImage(temp,red));
-		ReDraw();
-	}
+	if(input->TextHandle(ipString))	ReFillIpString();
 }
 
 void ConnectScreen::LeftClick(){
 	if(back->CheckHit(coords)) 
 	{
-		input->StartTextInput();
+		input->StopTextInput();
 		game->MainMenu();
 	}
+	else if (clear->CheckHit(coords))
+	{
+		ipString.clear();
+		ReFillIpString();
+	}
 
+}
+
+void ConnectScreen::ReFillIpString(){
+	SDL_Color red={200,0,0};
+	graphics->DestroyImage(field->GetImage());
+	if (!ipString.empty())
+	{
+		temp.assign(ipString.begin(),ipString.end());
+	}
+	else
+	{
+		temp.assign(L" ");
+	}
+	field->SetImage(graphics->NewImage(temp,red));
+	ReDraw();
 }

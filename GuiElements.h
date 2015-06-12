@@ -1,7 +1,7 @@
 #ifndef GUIELEMENTS_H
 #define GUIELEMENTS_H
 
-#include "IndependentInclude.h"
+#include "Independent.h"
 #include "Image.h"
 class Button {
 	Point point;

@@ -1,7 +1,7 @@
 #ifndef MENUSCREENS_H
 #define MENUSCREENS_H
 
-#include "IndependentInclude.h"
+#include "Independent.h"
 #include "Screen.h"
 #include "Game.h"
 #include "GuiElements.h"
@@ -18,10 +18,11 @@ public:
 
 
 class ConnectScreen : public Screen {
-	shared_ptr<Button> accept, back, connect, box, field;
+	shared_ptr<Button> accept, back, connect, box, field, clear, fail, process;
 	std::string ipString;
 	std::wstring temp;
 	void ReDraw();
+	void ReFillIpString();
 	void LeftClick();
 public:
 	void Start();

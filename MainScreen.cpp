@@ -5,9 +5,9 @@ void MainScreen::Start(){
 	SDL_Color black={0,0,0};
 	if(!initialized)
 	{
-		InitButton(server,L"Запустити сервер",black,100,200);
-		InitButton(client,L"Підключитися",black,100,250);
-		InitButton(exit,L"Покинути гру",black,100, 300);
+		InitButton(server,L"Запустити сервер",black,40,200);
+		InitButton(client,L"Підключитися",black,40,250);
+		InitButton(exit,L"Покинути гру",black,40, 300);
 		initialized=true;
 	}
 

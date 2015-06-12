@@ -1,12 +1,14 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "IndependentInclude.h"
+#include "Independent.h"
 
 class Input
 {
 private:
-	SDL_Event evt;
+	SDL_Event evt; 
+	Uint32 time;
+	char last;
 public:
 	Input();
 	void Update();
@@ -24,6 +26,8 @@ public:
 	void StartTextInput();
 	void StopTextInput();
 	bool TextHandle(std::string &s);
+
+	void CheckDirection(Direction &direction);
 };
 
 #endif

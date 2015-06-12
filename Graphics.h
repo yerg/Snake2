@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "IndependentInclude.h"
+#include "Independent.h"
 #include "Image.h"
 
 class Image;

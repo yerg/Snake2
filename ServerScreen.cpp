@@ -6,9 +6,9 @@ void ServerScreen::Start(){
 	
 	if(!initialized)
 	{
-		InitButton(make,L"Створити сервер",black,100,500);
+		InitButton(make,L"Створити сервер",black,40,500);
 		InitButton(wait,L"Чекаємо...",grey,340,500);
-		InitButton(start,L"Розпочати",black,100,550);
+		InitButton(start,L"Розпочати",black,40,550);
 		InitButton(back,L"Назад",black,500,500);
 		InitSetter(height,L"Висота поля:",200,20,20,25);
 		InitSetter(width,L"Ширина поля:",250,25,10,45,5);

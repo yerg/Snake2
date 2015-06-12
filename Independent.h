@@ -1,15 +1,15 @@
-#ifndef INDEPENDENTINCLUDE_H
-#define INDEPENDENTINCLUDE_H
+#ifndef INDEPENDENT_H
+#define INDEPENDENT_H
 
 
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <boost/asio.hpp>
 #include <string>
 #include <iostream>
 #include <memory>
+#include
 
 typedef unsigned char byte;
 using std::shared_ptr;
@@ -22,7 +22,7 @@ struct Point{
 	Point(int x, int y) : x(x), y(y){}
 };
 
-enum Map : char
+enum Section : char
 {
 	FREE,
 	SQUARE,
@@ -76,5 +76,5 @@ enum Map : char
 	DOWN,
 	LEFT
 };
-
+typedef Section Direction;
 #endif

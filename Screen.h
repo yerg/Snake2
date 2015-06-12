@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "IndependentInclude.h"
+#include "Independent.h"
 #include "Graphics.h"
 #include "Input.h"
 #include "GuiElements.h"

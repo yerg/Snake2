@@ -65,12 +65,12 @@ void Input::StopTextInput(){
 bool Input::TextHandle(std::string &s){
 	bool textChanged = false;
 	if( evt.type == SDL_KEYDOWN ) { 
-		//Handle backspace 
+
 		if( evt.key.keysym.sym == SDLK_BACKSPACE && s.length() > 0 ) 
 		{ 
-			//lop off character 
-			s.pop_back(); 
+			s.pop_back();
 			textChanged = true; 
+			do {Update();} while (IsKeyDown(SDLK_BACKSPACE));
 		}  
 		else if( evt.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL ) 
 		{ 
@@ -86,8 +86,30 @@ bool Input::TextHandle(std::string &s){
 	{ 
 		if( !( ( evt.text.text[ 0 ] == 'c' || evt.text.text[ 0 ] == 'C' ) && ( evt.text.text[ 0 ] == 'v' || evt.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) ) 
 		{ 
-			s += evt.text.text; textChanged = true; 
+			if ((evt.text.text[0]!=last)||(evt.text.timestamp>time+100))
+			{
+				s += evt.text.text; 
+				textChanged = true;
+			}
+			time=evt.text.timestamp;
+			for(int i=1; i<=32; i++) if (evt.text.text[i]=='\0') {last=evt.text.text[i-1]; i=32;}
 		} 
 	}
 	return textChanged;
+}
+
+void Input::CheckDirection(Direction &direction){
+	if (evt.type == SDL_KEYDOWN) {
+		switch (evt.key.keysym.sym)
+		{
+		case SDLK_UP:
+			direction=UP; break;
+		case SDLK_RIGHT:
+			direction=RIGHT; break;
+		case SDLK_DOWN:
+			direction=DOWN; break;
+		case SDLK_LEFT:
+			direction=LEFT; break;
+		}
+	}
 }

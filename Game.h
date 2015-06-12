@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "IndependentInclude.h"
-//#include "Graphics.h"
-//#include "Input.h"
+#include "Independent.h"
 #include "Screen.h"
 #include "MenuScreens.h"
+#include "Server.h"
+#include "Client.h"
 
 class Graphics;
 class Input;
@@ -18,7 +18,9 @@ private:
 
 	shared_ptr<Graphics> graphics;
 	shared_ptr<Input> input;
-	shared_ptr<Screen> mainScreen, connectScreen, serverScreen, gameScreen, screen;
+	shared_ptr<Screen> mainScreen, connectScreen, serverScreen, gameScreen, serverInput, clientInput, screen;
+	shared_ptr<Server> serverIn, serverOut;
+	shared_ptr<Client> clientIn, clientOut;
 	void SetScreen(shared_ptr<Screen> &screen);
 public:
 	Game();
@@ -27,6 +29,8 @@ public:
 	void ConnectMenu(){SetScreen(connectScreen);}
 	void MainMenu(){SetScreen(mainScreen);}
 	void Exit();
+
+	bool
 };
 
 #endif
