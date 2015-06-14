@@ -6,7 +6,7 @@
 #include "Connections.h"
 #include "Screen.h"
 class ClientInput : public Screen{
-	shared_ptr<Client> clientOut;
+	shared_ptr<ClientConnection> clientOut;
 	Direction last, direction;
 public:
 	void Update();
@@ -15,7 +15,7 @@ public:
 
 class ClientReciever{
 	Drawer * drawer;
-	shared_ptr<Client> clientIn;
+	shared_ptr<ClientConnection> clientIn;
 public:
 
 };

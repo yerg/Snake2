@@ -13,7 +13,7 @@ class Drawer {
 public:
 	Drawer(Graphics *graphics);
 	void Set(int w, int h, int penalty, int lenght);
-	void Draw(Section* letter);
+	void Draw(std::vector<Section> letter);
 };
 
 #endif

@@ -73,7 +73,6 @@
     <ClCompile Include="ConnectScreen.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -86,6 +85,7 @@
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="Connections.h" />
+    <ClInclude Include="Enums.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />

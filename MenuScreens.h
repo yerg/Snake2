@@ -19,6 +19,7 @@ public:
 
 class ConnectScreen : public Screen {
 	shared_ptr<Button> accept, back, connect, box, field, clear, fail, process;
+	bool processInd, failInd;
 	std::string ipString;
 	std::wstring temp;
 	void ReDraw();
@@ -35,8 +36,9 @@ class ServerScreen : public Screen {
 		int value, min, max, pace;
 	};
 
-	shared_ptr<Button> back, make, wait, start;
+	shared_ptr<Button> back, make, wait;
 	shared_ptr<Setter> height, width, lenght, penalty, speed, acceleration;
+	bool started;
 	std::wstring temp;
 	void LeftClick();
 	void InitSetter(shared_ptr<Setter> &setter, const wchar_t* text, int y, int value, int min, int max, int pace=1);

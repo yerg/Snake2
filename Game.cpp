@@ -3,6 +3,7 @@
 Game::Game()
 {
 	run = true;
+	stopConnections=true;
 }
 
 int Game::Execute(int width, int height, const char *title)
@@ -41,4 +42,17 @@ void Game::SetScreen(shared_ptr<Screen> &screen)
 void Game::Exit()
 {
 	run = false;
+}
+
+void Game::CreateServer(){
+
+}
+
+void Game::StopServer(){
+
+}
+
+bool Game::ConnectToServer(){
+	SDL_Delay(1300);
+	return true;
 }

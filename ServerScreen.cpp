@@ -3,19 +3,18 @@
 void ServerScreen::Start(){
 	SDL_Color black={0,0,0};
 	SDL_Color grey={50,50,50};
-	
+	started=false;
 	if(!initialized)
 	{
 		InitButton(make,L"Створити сервер",black,40,500);
 		InitButton(wait,L"Чекаємо...",grey,340,500);
-		InitButton(start,L"Розпочати",black,40,550);
 		InitButton(back,L"Назад",black,500,500);
 		InitSetter(height,L"Висота поля:",200,20,20,25);
 		InitSetter(width,L"Ширина поля:",250,25,10,45,5);
 		InitSetter(lenght,L"Довжина змійки, що необхідна для перемоги:",300,15,15,50);
 		InitSetter(penalty,L"Штраф довжини:",350,10,1,50);
-		InitSetter(speed,L"Швидкість руху змійки:",400,1,1,15);
-		InitSetter(acceleration,L"Збільшення швидкості руху змійки:",450,1,0,5);
+		InitSetter(speed,L"Швидкість руху змійки, клітин в хвилину:",400,60,30,240,10);
+		InitSetter(acceleration,L"Збільшення швидкості руху змійки:",450,10,0,30,2);
 		initialized=true;
 	}
 	ReDraw();
@@ -28,25 +27,35 @@ void ServerScreen::ReDraw(){
 	DrawSetter(penalty);
 	DrawSetter(speed);
 	DrawSetter(width);
-	Draw(make);
-	Draw(wait);
-	Draw(start);
+	if (started) Draw(wait);
+	else Draw(make);
 	Draw(back);
 	graphics->Flip();
 }
 
 void ServerScreen::Update(){
 	HandleLeftClick();
+	if(input->IsExit()) game->Exit();
 }
 
 void ServerScreen::LeftClick(){
-	if(back->CheckHit(coords)) game->MainMenu();
+	if(back->CheckHit(coords)) 
+	{
+		if (started) game->StopServer();
+		game->MainMenu();
+	}
+	else if(!started && make->CheckHit(coords)) 
+	{
+		game->CreateServer();
+		started=true;
+		ReDraw();
+	}
 	else if (CheckHitSetter(acceleration));
 	else if (CheckHitSetter(height));
 	else if (CheckHitSetter(width));
 	else if (CheckHitSetter(speed));
 	else if (CheckHitSetter(lenght));
-	else if (CheckHitSetter(penalty));
+	else CheckHitSetter(penalty);
 }
 
 bool ServerScreen::CheckHitSetter(shared_ptr<Setter> &setter){

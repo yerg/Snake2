@@ -2,6 +2,8 @@
 
 void ConnectScreen::Start(){
 	SDL_Color black={0,0,0}, grey={50,50,50}, red={200,0,0};
+	processInd=false;
+	failInd=false;
 	if(!initialized)
 	{
 		InitButton(connect,L"Підключення. Введіть IP-адресу сервера:",grey,40,200);
@@ -10,27 +12,28 @@ void ConnectScreen::Start(){
 		InitButton(field,L" ", red,45,250);
 		box=make_shared<Button>(graphics->NewImage("img/box.bmp"),Point(40,245));
 		InitButton(clear,L"Очистити поле",black,40,300);
-		InitButton(process,L"Намагаємося підключитися...",grey,350,300);
-		InitButton(fail,L"Не вдалося підключитися",grey,350,350);
+		InitButton(process,L"Намагаємося підключитися...",grey,280,300);
+		InitButton(fail,L"Не вдалося підключитися",grey,280,300);
 		initialized=true;
 	}
 	ReDraw();
 	input->StartTextInput();
 }
 void ConnectScreen::ReDraw(){
-	Draw(connect);
-	Draw(accept);
+	if (!processInd) Draw(connect);
+	if (!processInd) Draw(accept);
 	Draw(back);
 	Draw(box);
 	Draw(field);
 	Draw(clear);
-	Draw(fail);
-	Draw(process);
+	if (failInd) Draw(fail);
+	if (processInd) Draw(process);
 	graphics->Flip();
 }
 void ConnectScreen::Update(){
 	HandleLeftClick();
 	if(input->TextHandle(ipString))	ReFillIpString();
+	if(input->IsExit()) game->Exit();
 }
 
 void ConnectScreen::LeftClick(){
@@ -44,7 +47,16 @@ void ConnectScreen::LeftClick(){
 		ipString.clear();
 		ReFillIpString();
 	}
-
+	else if (accept->CheckHit(coords))
+	{
+		input->StopTextInput();
+		failInd=false;
+		processInd=true;
+		ReDraw();
+		failInd=game->ConnectToServer();
+		processInd=false;
+		ReDraw();
+	}
 }
 
 void ConnectScreen::ReFillIpString(){

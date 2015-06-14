@@ -20,6 +20,7 @@ void MainScreen::Update(){
 	graphics->Flip();	// We will get black window if we move this part into Start().
 
 	HandleLeftClick();
+	if(input->IsExit()) game->Exit();
 }
 
 void MainScreen::LeftClick(){
