@@ -46,6 +46,7 @@ enum Section : char
 	TAIL_UD_2,
 	TAIL_RL_2,
 	TAIL_DU_2,
+	MAP,
 	WIN_1,
 	WIN_2,
 	DRAW,

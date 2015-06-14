@@ -36,6 +36,7 @@ void ServerScreen::ReDraw(){
 void ServerScreen::Update(){
 	HandleLeftClick();
 	if(input->IsExit()) game->Exit();
+	game->CheckNewConnections();
 }
 
 void ServerScreen::LeftClick(){
@@ -46,7 +47,7 @@ void ServerScreen::LeftClick(){
 	}
 	else if(!started && make->CheckHit(coords)) 
 	{
-		game->CreateServer();
+		game->CreateServer(width->value, height->value, lenght->value, penalty->value, speed->value, acceleration->value);
 		started=true;
 		ReDraw();
 	}

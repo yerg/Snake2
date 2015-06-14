@@ -53,7 +53,7 @@ void ConnectScreen::LeftClick(){
 		failInd=false;
 		processInd=true;
 		ReDraw();
-		failInd=game->ConnectToServer();
+		failInd=game->ConnectToServer(ipString);
 		processInd=false;
 		ReDraw();
 	}

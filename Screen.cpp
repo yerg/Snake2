@@ -32,8 +32,3 @@ void Screen::Update()
 {
 
 }
-
-void Screen::Destroy()
-{
-
-}

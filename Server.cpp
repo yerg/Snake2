@@ -7,7 +7,7 @@ void Snake::StartSet(){
 	body[1].assign(2, UP);
 	square[0].Set(-1,-1);
 	square[1].Set(-1,-1);
-	map.resize(h*w+2);
+	map.reserve(h*w+2);
 	currentSpeed=speed;
 	srand(static_cast<unsigned int>(time(NULL)));
 }
@@ -200,7 +200,7 @@ void Snake::MakeMap(){
 		for (int i=0; i<2; i++)
 		{
 			tmp=rand() % (h*w-(body[0].size()+body[1].size()+2+i));
-			k=0;
+			k=1;
 			while (map.at(k)!=FREE){
 				++k;
 			}
@@ -221,6 +221,8 @@ void Snake::MakeMap(){
 		map.at(Position(square[0]))=SQUARE;
 		map.at(Position(square[1]))=SQUARE;
 	}
+	map.at(0)=MAP;
+	map.push_back(END);
 }
 
 void Snake::DoNextMove(){
@@ -230,8 +232,8 @@ void Snake::DoNextMove(){
 	Point p;
 	Point newh[2];
 	Direction serverMove = *sMove, clientMove = *cMove;
-	newh[0]=CountNext(head[0], serverMove);
-	newh[1]=CountNext(head[1], clientMove);
+	newh[0]= serverMove!=body[0].front() ? CountNext(head[0], serverMove) : CountNext(head[0], Reverse(serverMove));
+	newh[1]= clientMove!=body[1].front() ? CountNext(head[1], clientMove) : CountNext(head[1], Reverse(clientMove));
 	
 	//Out of bounds
 	if (IsOutOfBounds(newh[0])) 
@@ -240,17 +242,17 @@ void Snake::DoNextMove(){
 		if (IsOutOfBounds(newh[1]))
 		{ 
 			newh[1]=head[1];
-			DoDraw();
+			DoFinish(DRAW);
 		}
 		else 
 		{
-			DoLose();
+			DoFinish(WIN_2);
 		}
 	}
 	else if (IsOutOfBounds(newh[1])) 
 	{
 		newh[1]=head[1];
-		DoWin();
+		DoFinish(WIN_1);
 	}
 
 	//Bite head
@@ -268,9 +270,9 @@ void Snake::DoNextMove(){
 			doPenalty[0]=true;
 			doPenalty[1]=true;
 		}
-		else DoWin();
+		else DoFinish(WIN_1);
 	}
-	else if (newh[1]==head[0]) DoLose();
+	else if (newh[1]==head[0]) DoFinish(WIN_2);
 
 	//Bite body
 	else 
@@ -303,12 +305,12 @@ void Snake::DoNextMove(){
 		}
 
 		//Bite tail
-		if (map.at(Position(newh[0]))>=TAIL_LR_2 && map.at(Position(newh[0]))<=TAIL_DU_2 && (newh[1]!=square[0] || newh[1]!=square[1]))
+		if (map.at(Position(newh[0]))>=TAIL_LR_2 && map.at(Position(newh[0]))<=TAIL_DU_2 && (newh[1]==square[0] || newh[1]==square[1]))
 		{
 			body[0].push_back(FREE);
 			body[1].pop_back();
 		}
-		else if (map.at(Position(newh[1]))>=TAIL_LR_2 && map.at(Position(newh[1]))<=TAIL_DU_2 && (newh[0]!=square[0] || newh[0]!=square[1]))
+		else if (map.at(Position(newh[1]))>=TAIL_LR_2 && map.at(Position(newh[1]))<=TAIL_DU_2 && (newh[0]==square[0] || newh[0]==square[1]))
 		{
 			body[1].push_back(FREE);
 			body[0].pop_back();
@@ -316,15 +318,17 @@ void Snake::DoNextMove(){
 	}
 
 	//Eat square
-	if (newh[0]!=square[0] || newh[0]!=square[1])
+	for (int snake=0; snake<2; snake++) 
 	{
-		body[0].push_back(FREE);
-		currentSpeed+=acc;
-	}
-	if (newh[1]!=square[0] || newh[1]!=square[1])
-	{
-		body[1].push_back(FREE);
-		currentSpeed+=acc;
+		for (int sq=0; sq<2; sq++) 
+		{
+			if (newh[snake]==square[sq])
+			{
+				body[snake].push_back(FREE);
+				square[sq].Set(-1,-1);
+				currentSpeed+=acc;
+			}
+		}
 	}
 
 	//Move snakes
@@ -340,27 +344,26 @@ void Snake::DoNextMove(){
 	{
 		if(doPenalty[0]||doPenalty[1])
 		{
-			body[0].size()+penalty*doPenalty[1] == body[1].size()+penalty*doPenalty[0] ? DoDraw() : 
-				body[0].size()+penalty*doPenalty[1] > body[1].size()+penalty*doPenalty[0] ? DoWin() : DoLose();
+			body[0].size()+penalty*doPenalty[1] == body[1].size()+penalty*doPenalty[0] ? DoFinish(DRAW) : 
+				body[0].size()+penalty*doPenalty[1] > body[1].size()+penalty*doPenalty[0] ? DoFinish(WIN_1) : DoFinish(WIN_2);
 		}
-		else if (body[0].size()>=lenght-1)
+		else if (1+static_cast<int>(body[0].size())>=lenght)
 		{
-			if (body[1].size()>=lenght-1) DoDraw();
-			else DoWin();
+			if (1+static_cast<int>(body[1].size())>=lenght) DoFinish(DRAW);
+			else DoFinish(WIN_1);
 		} 
-		else if (body[1].size()>=lenght-1) DoLose();
+		else if (1+static_cast<int>(body[1].size())>=lenght) DoFinish(WIN_2);
 	}
 }
 
-void Snake::DoWin(){
-	gameFinished=true;
+void Snake::DoFinish(Section s){
+	map.clear();
+	map.push_back(s);
+	map.push_back(END);
+	serverOut->Send(&map[0],2);
+	gameFinished=s;
 }
-void Snake::DoWin(){
-	gameFinished=true;
-}
-void Snake::DoWin(){
-	gameFinished=true;
-}
+
 
 Point Snake::CountNext(Point p, const Section &s) const{
 	switch (s) {
@@ -375,7 +378,8 @@ Point Snake::CountNext(Point p, const Section &s) const{
 	default:
 		throw "Snake has wrong parts";
 	}
-//	if (p.x<0 || p.y<0 || p.x>=w || p.y>=h) throw "Snake has cheated coordinates!";
+//	if (p.x<0 || p.y<0 || p.x>=w || p.y>=h) throw "Snake has cheated coordinates!"; 
+	// Cheated coordinates are allowed in some cases
 	return p;
 }
 int Snake::Position(const Point &p)const {
@@ -405,14 +409,32 @@ Direction Snake::Reverse(const Direction &d)const{
 }
 
 void Snake::GameLoop(){
-	gameFinished=false;
+	gameFinished=FREE;
 	currentSpeed=speed;
-	MakeMap();
-	while (!*stopChecker) {
+	drawer->Set(w,h,penalty,lenght);
+	int a[4]={w,h,penalty,lenght};
+	serverOut->Send(a,4);
+	while (!(*stopChecker || gameFinished)) {
+		MakeMap();
 		serverOut->Send(&map[0],map.size());
+
 		drawer->Draw(map);
 		SDL_Delay(60000/currentSpeed);
 		DoNextMove();
-		MakeMap();
+	}
+}
+
+void ServerReciever::Loop(){
+	while (!stopChecker && connection)
+	{
+		try 
+		{
+			serverIn->Recieve(message);
+			if(message.size()) cMove=message.front();
+		} 
+		catch (...)
+		{
+			connection=false;
+		}
 	}
 }

@@ -4,20 +4,20 @@
 #include "Independent.h"
 #include "Drawer.h"
 #include "Connections.h"
-#include "Screen.h"
-class ClientInput : public Screen{
-	shared_ptr<ClientConnection> clientOut;
-	Direction last, direction;
-public:
-	void Update();
-	void Start();
-};
 
 class ClientReciever{
-	Drawer * drawer;
+	shared_ptr<Drawer> drawer;
 	shared_ptr<ClientConnection> clientIn;
+	const bool * stopChecker;
+	bool connection;
+	Section gameFinished;
+	std::vector<Section> map;
 public:
-
+	ClientReciever(shared_ptr<Drawer> drawer, shared_ptr<ClientConnection> clientIn, const bool * stopChecker) : drawer(drawer), clientIn(clientIn), stopChecker(stopChecker), connection(true){}
+	bool Connection()const{return connection;}
+	void CloseConnection(){clientIn->CloseConnection();}
+	void Loop();
+	Section IsFinished()const{return gameFinished;}
 };
 
 #endif

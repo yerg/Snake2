@@ -73,6 +73,7 @@
     <ClCompile Include="ConnectScreen.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameScreens.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -88,6 +89,7 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameScreens.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GuiElements.h" />
     <ClInclude Include="Image.h" />

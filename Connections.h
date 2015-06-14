@@ -5,7 +5,6 @@
 #include "Independent.h"
 #include <boost/asio.hpp>
 
-typedef std::function<void(const boost::system::error_code&)> AcceptHandler;
 
 using namespace boost::asio;
 
@@ -14,10 +13,14 @@ protected:
 	boost::system::error_code err;
 	io_service service;
 	shared_ptr<ip::tcp::socket> sock;
+	int port;
+	bool sockInit;
 public:
-	Connection(){}
+	Connection(int port) : port(port), sockInit(false){}
 	void Send(Section* data, size_t  size=1);
+	void Send(int* data, size_t size);
 	void Recieve(std::vector<Section> &data);
+	void Recieve(std::vector<int> &data);
 	void CloseConnection();
 	~Connection(){CloseConnection();}
 };
@@ -26,13 +29,16 @@ public:
 class ServerConnection : public Connection{
 	ip::tcp::acceptor acceptor;
 public:
-	ServerConnection() : acceptor(service, ip::tcp::endpoint(ip::tcp::v4(),25255)){}
-	void AcceptConnection(AcceptHandler handler);
+	ServerConnection(int port) : Connection(port),acceptor(service, ip::tcp::endpoint(ip::tcp::v4(),port)){}
+	void AcceptConnection(std::function<void(const boost::system::error_code&)> handler);
+	void Poll(){service.poll();}
+	void StopAccepting();
 };
 
 class ClientConnection : public Connection{
 	ip::tcp::endpoint ep;
 public:
+	ClientConnection(int port) : Connection(port){}
 	bool Connect(const std::string &sIP);
 };
 
