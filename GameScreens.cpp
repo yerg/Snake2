@@ -15,7 +15,7 @@ void ServerInput::Update(){
 	else if (game->CheckServerConnections()) 
 	{
 		input->CheckDirection(newDirection);
-		if (direction!=newDirection) newDirection=direction;
+		if (direction!=newDirection) direction=newDirection;
 		if (input->IsExit()) game->Exit();
 	}
 	else 

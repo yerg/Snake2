@@ -21,6 +21,7 @@ typedef unsigned char byte;
 using std::shared_ptr;
 using std::make_shared;
 
+const int WIDTH=800, HEIGHT=600;
 struct Point{
 	int x;
 	int y;
@@ -31,5 +32,9 @@ struct Point{
 	bool operator!=(const Point &rhs) const {return !(*this==rhs);}
 };
 
-
+struct Settings{
+	int w; int h; int lenght; int penalty; int speed; int acc;
+	Settings(){}
+	Settings(int w, int h, int lenght, int penalty, int speed, int acc) : w(w), h(h), lenght(lenght), penalty(penalty), speed(speed), acc(acc){}
+};
 #endif

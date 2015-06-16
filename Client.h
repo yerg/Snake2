@@ -5,17 +5,17 @@
 #include "Drawer.h"
 #include "Connections.h"
 
-class ClientReciever{
+class ClientReceiver{
 	shared_ptr<Drawer> drawer;
 	shared_ptr<ClientConnection> clientIn;
-	const bool * stopChecker;
+	bool * stopChecker;
 	bool connection;
 	Section gameFinished;
 	std::vector<Section> map;
 public:
-	ClientReciever(shared_ptr<Drawer> drawer, shared_ptr<ClientConnection> clientIn, const bool * stopChecker) : drawer(drawer), clientIn(clientIn), stopChecker(stopChecker), connection(true){}
+	ClientReceiver(shared_ptr<Drawer> drawer, shared_ptr<ClientConnection> clientIn, bool * stopChecker) : drawer(drawer), clientIn(clientIn), stopChecker(stopChecker), connection(true), gameFinished(FREE){}
 	bool Connection()const{return connection;}
-	void CloseConnection(){clientIn->CloseConnection();}
+	void CloseConnection(){clientIn->CloseSocket();}
 	void Loop();
 	Section IsFinished()const{return gameFinished;}
 };

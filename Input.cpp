@@ -39,15 +39,6 @@ bool Input::IsKeyDown(byte key)
 	return (evt.type == SDL_KEYDOWN && evt.key.keysym.sym == key);
 }
 
-bool Input::IsKeyUp(byte key)
-{
-	return (evt.type == SDL_KEYUP && evt.key.keysym.sym == key);
-}
-
-byte Input::GetPressedKey()
-{
-	return evt.key.keysym.sym;
-}
 
 bool Input::IsExit()
 {

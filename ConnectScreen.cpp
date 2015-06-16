@@ -20,12 +20,16 @@ void ConnectScreen::Start(){
 	input->StartTextInput();
 }
 void ConnectScreen::ReDraw(){
-	if (!processInd) Draw(connect);
-	if (!processInd) Draw(accept);
-	Draw(back);
+	if (!processInd)
+	{
+		Draw(connect);
+		Draw(accept);
+		Draw(back);
+		Draw(clear);
+	}
 	Draw(box);
 	Draw(field);
-	Draw(clear);
+
 	if (failInd) Draw(fail);
 	if (processInd) Draw(process);
 	graphics->Flip();
@@ -49,11 +53,11 @@ void ConnectScreen::LeftClick(){
 	}
 	else if (accept->CheckHit(coords))
 	{
-		input->StopTextInput();
 		failInd=false;
 		processInd=true;
 		ReDraw();
 		failInd=game->ConnectToServer(ipString);
+		if(!failInd)input->StopTextInput();
 		processInd=false;
 		ReDraw();
 	}

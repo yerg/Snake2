@@ -12,13 +12,14 @@ class ServerInput : public Screen {
 public: 
 	void Update();
 	void Start();
-	const Direction* GetDirection()const{return &direction;}
+	Direction* GetDirection(){return &direction;}
 };
 
 class ClientInput : public Screen{
-	shared_ptr<ClientConnection> clientOut;
+	ClientConnection* clientOut;
 	Direction last, direction, finish;
 public:
+	void SetConnection(ClientConnection* c) {clientOut=c;}
 	void Update();
 	void Start();
 };

@@ -13,8 +13,8 @@ class Snake {
 	Section gameFinished;
 	bool connection;
 
-	const bool * stopChecker;
-	const Direction *sMove, *cMove;
+	bool * stopChecker;
+	Direction *sMove, *cMove;
 	shared_ptr<Drawer> drawer;
 	shared_ptr<ServerConnection> serverOut;
 
@@ -28,28 +28,25 @@ class Snake {
 	Direction Reverse(const Direction &d)const;
 	void DoFinish(Section s);
 public:
-	Snake(shared_ptr<Drawer> drawer, shared_ptr<ServerConnection> serverOut, int w, int h, int lenght, int penalty, int speed, int acc,  const bool *stopChecker, const Direction *sMove, const Direction *cMove)
-		: drawer(drawer), serverOut(serverOut), w(w), h(h), lenght(lenght), penalty(penalty), speed(speed), acc(acc), stopChecker(stopChecker), sMove(sMove), cMove(cMove), connection(true)
-	{
-		StartSet();
-	}
+	Snake(shared_ptr<Drawer> drawer, shared_ptr<ServerConnection> serverOut, Settings s,  bool *stopChecker, Direction *sMove, Direction *cMove)
+		: drawer(drawer), serverOut(serverOut), w(s.w), h(s.h), lenght(s.lenght), penalty(s.penalty), speed(s.speed), acc(s.acc), stopChecker(stopChecker), sMove(sMove), cMove(cMove), connection(true),gameFinished(FREE){}
 	void GameLoop();
 	bool Connection()const{return connection;}
-	void CloseConnection(){serverOut->CloseConnection();}
+	void CloseConnection(){serverOut->CloseSocket();}
 	Section IsFinished()const{return gameFinished;}
 };
 
-class ServerReciever {
+class ServerReceiver {
 	shared_ptr<ServerConnection> serverIn;
-	const bool * stopChecker;
+	bool * stopChecker;
 	bool connection;
 	Direction cMove;
-	std::vector<Direction> message;
+	Direction message;
 public:
-	ServerReciever(shared_ptr<ServerConnection> serverIn, const bool *stopChecker) :serverIn(serverIn), stopChecker(stopChecker), cMove(DOWN), connection(true) {}
+	ServerReceiver(shared_ptr<ServerConnection> serverIn, bool *stopChecker) :serverIn(serverIn), stopChecker(stopChecker), cMove(DOWN), connection(true) {}
 	bool Connection()const{return connection;}
-	void CloseConnection(){serverIn->CloseConnection();}
-	const Direction* GetDirection()const{return &cMove;}
+	void CloseConnection(){serverIn->CloseSocket();}
+	Direction* GetDirection(){return &cMove;}
 	void Loop();
 };
 

@@ -1,14 +1,10 @@
 #include "Game.h"
 
-Game::Game()
-{
-	run = true;
-	stopGameSession = true;
-}
 
-int Game::Execute(int width, int height, const char *title)
+int Game::Execute(const char *title) try
 {
-	graphics = make_shared<Graphics>(width, height, title);
+
+	graphics = make_shared<Graphics>(WIDTH, HEIGHT, title);
 	input = make_shared<Input>();
 	mainScreen = make_shared<MainScreen>();
 	connectScreen = make_shared<ConnectScreen>();
@@ -18,6 +14,9 @@ int Game::Execute(int width, int height, const char *title)
 	clientIn=make_shared<ClientConnection>(25256);
 	clientOut=make_shared<ClientConnection>(25255);
 	drawer=make_shared<Drawer>(graphics.get());
+	serverInput=shared_ptr<ServerInput>(rawServerInput=new ServerInput);
+	clientInput=shared_ptr<ClientInput>(rawClientInput=new ClientInput);
+
 
 
 	screen=mainScreen;
@@ -31,17 +30,30 @@ int Game::Execute(int width, int height, const char *title)
 		screen->Update();
 	}
 
-	screen->Destroy();
-
-
 	return 0;
 }
+catch (std::string &s)
+{
+	std::cout<<std::endl<<s<<std::endl<<"Press enter to exit...";
+	getchar();
+}
+catch (const char * c)
+{
+	std::cout<<std::endl<<c<<std::endl<<"Press enter to exit...";
+	getchar();
+}
+catch (...)
+{
+	std::cout<<std::endl<<"Unknown error"<<std::endl<<"Press enter to exit...";
+	getchar();
+}
 
-void Game::SetScreen(shared_ptr<Screen> &screen)
+void Game::SetScreen(shared_ptr<Screen> screen)
 {
 	this->screen = screen;
 	this->screen->SetController(this,input.get(),graphics.get());
 	this->screen->Start();
+
 }
 
 void Game::Exit()
@@ -53,19 +65,23 @@ void Game::Exit()
 	SDL_WaitThread(thServer,&tmp);
 }
 
-void Game::CreateServer(int w, int h, int lenght, int penalty, int speed, int acc){
-	serverOut->AcceptConnection(boost::bind(HandleAccept,&countConnections,_1));
+void Game::CreateServer(Settings s){
 	serverIn->AcceptConnection(boost::bind(HandleAccept,&countConnections,_1));
-	this->w=w; this->h=h; this->lenght=lenght; this->penalty=penalty; this->speed=speed; this->acc=acc;
+	serverOut->AcceptConnection(boost::bind(HandleAccept,&countConnections,_1));
+	settings=s;
 }
 
 void Game::CheckNewConnections(){
-	serverIn->Poll();
 	serverOut->Poll();
+	serverIn->Poll();
 	if (countConnections==2)
 	{
-		serverReciever=make_shared<serverReciever>(serverIn,&stopGameSession);
-		snake=make_shared<Snake>(drawer, serverOut, w, h, lenght, penalty, speed, acc, &stopGameSession,serverReciever->GetDirection(),s<>serverInput->GetDirection());
+		stopGameSession=false;
+		serverReceiver=make_shared<ServerReceiver>(serverIn,&stopGameSession);
+		snake=make_shared<Snake>(drawer, serverOut,settings, &stopGameSession,rawServerInput->GetDirection(),serverReceiver->GetDirection());
+		thServer=SDL_CreateThread(ThreadServer,"SNAKE2_Server_Reciever",serverReceiver.get());
+		thSnake=SDL_CreateThread(ThreadSnake,"SNAKE2_GameLoop",snake.get());
+		SetScreen(serverInput);
 	}
 	else if (countConnections<0)
 	{
@@ -84,42 +100,58 @@ bool Game::ConnectToServer(std::string ipString){
 	{
 		if (clientOut->Connect(ipString))
 		{
-			clientReciever=make_shared<ClientReciever>(drawer,clientIn,&stopGameSession);
-			thClient=SDL_CreateThread(ThreadClient,"Client_Reciever",clientReciever.get());
+			stopGameSession=false;
+			clientReceiver=make_shared<ClientReceiver>(drawer,clientIn,&stopGameSession);
+			thClient=SDL_CreateThread(ThreadClient,"SNAKE2_Client_Reciever",clientReceiver.get());
+			rawClientInput->SetConnection(clientOut.get());
 			SetScreen(clientInput);
-			return true;
+			return false;
 		}
-		else clientIn->CloseConnection();
+		else clientIn->CloseSocket();
 	}
-	return false;
+	return true;
 }
 
 void Game::CloseServer(){
+	stopGameSession=true;
+	SDL_Delay(15);
+	serverIn->StopAccepting();
+	serverOut->StopAccepting();
 	SDL_WaitThread(thSnake,&tmp);
+	thSnake=NULL;
 	SDL_WaitThread(thServer,&tmp);
-	serverReciever.reset();
+	thServer=NULL;
+	serverReceiver.reset();
 	snake.reset();
+	graphics->SetResolution(WIDTH,HEIGHT);
 	SetScreen(mainScreen);
 }
 
 void Game::CloseClient(){
+	stopGameSession=true;
+	SDL_Delay(15);
+	clientIn->CloseSocket();
+	clientOut->CloseSocket();
 	SDL_WaitThread(thClient,&tmp);
-	clientReciever.reset();
+	thClient=NULL;
+	clientReceiver.reset();
+	rawClientInput->SetConnection(NULL);
+	graphics->SetResolution(WIDTH,HEIGHT);
 	SetScreen(mainScreen);
 }
 
 
 void Game::FinalServerMenu(Section s){
-	std::cout<<std::endl<<static_cast<char>(s);
+	std::cout<<std::endl<<static_cast<int>(s);	//Dummy
 	CloseServer();
 }
 void Game::FinalClientMenu(Section s){
-	std::cout<<std::endl<<static_cast<char>(s);
+	std::cout<<std::endl<<static_cast<int>(s);	//Dummy
 	CloseClient();
 }
 
 bool Game::CheckServerConnections(){
-	if (!(serverReciever->Connection() && snake->Connection()))
+	if (!(serverReceiver->Connection() && snake->Connection()))
 	{
 		StopGameSession();
 		return false;
@@ -128,7 +160,7 @@ bool Game::CheckServerConnections(){
 }
 
 bool Game::CheckClientConnections(){
-	if (!clientReciever->Connection())
+	if (!clientReceiver->Connection())
 	{
 		StopGameSession();
 		return false;
@@ -144,13 +176,13 @@ Section Game::IsServerFinished(){
 }
 Section Game::IsClientFinished(){
 	Section s;
-	s=clientReciever->IsFinished();
+	s=clientReceiver->IsFinished();
 	if (s!=FREE) StopGameSession();
 	return s;
 }
 
 int ThreadClient(void * data){
-	static_cast<ClientReciever*>(data)->Loop();
+	static_cast<ClientReceiver*>(data)->Loop();
 	return 0;
 }
 int ThreadSnake(void * data){
@@ -158,15 +190,15 @@ int ThreadSnake(void * data){
 	return 0;
 }
 int ThreadServer(void * data){
-	static_cast<ServerReciever*>(data)->Loop();
+	static_cast<ServerReceiver*>(data)->Loop();
 	return 0;
 }
 
 void HandleAccept(int* count, const boost::system::error_code & err) {
 	if (err) 
 	{
-		*count=-2;
+		*count=-3;
 		return;
 	}
-	*count++;
+	(*count)+=1;
 }

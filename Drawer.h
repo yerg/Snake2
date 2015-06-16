@@ -7,7 +7,7 @@
 class Drawer {
 	Graphics * graphics;
 	int w, h;
-	Image * map, *penalty, *lenght;
+	Image * map, *penalty, *lenght, *win1, *win2, *draw, *finish;
 	bool initialized;
 
 public:

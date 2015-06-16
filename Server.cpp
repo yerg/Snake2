@@ -1,15 +1,17 @@
 #include "Server.h"
 
 void Snake::StartSet(){
-	head[0].Set(7,0);
+	srand(static_cast<unsigned int>(time(NULL)));
+	gameFinished=FREE;
+	head[0].Set(rand()%8+1,rand()%3+5);
 	body[0].assign(2, DOWN);
-	head[1].Set(12,0);
+	head[1].Set(rand()%8+1,rand()%3+12);
 	body[1].assign(2, UP);
 	square[0].Set(-1,-1);
 	square[1].Set(-1,-1);
 	map.reserve(h*w+2);
 	currentSpeed=speed;
-	srand(static_cast<unsigned int>(time(NULL)));
+
 }
 
 void Snake::MakeMap(){
@@ -21,7 +23,7 @@ void Snake::MakeMap(){
 	for(int i=0; i<2; i++) 
 	{
 		//Head
-		if (body[i].size()<2) throw erB;
+		if (body[i].size()<1) throw erB;
 		switch (body[i].at(0)){
 		case UP:
 			s=HEAD_DU; break;
@@ -44,11 +46,11 @@ void Snake::MakeMap(){
 				switch(body[i].at(1))
 				{
 				case RIGHT:
-					s=NECK_UR_1; break;
-				case DOWN:
-					s=NECK_UD_1; break;
+					s=NECK_DR_1; break;
+				case UP:
+					s=NECK_DU_1; break;
 				case LEFT:
-					s=NECK_UL_1; break;
+					s=NECK_DL_1; break;
 				default:
 					throw erP;
 				}
@@ -57,11 +59,11 @@ void Snake::MakeMap(){
 				switch(body[i].at(1))
 				{
 				case UP:
-					s=NECK_RU_1; break;
+					s=NECK_LU_1; break;
 				case DOWN:
-					s=NECK_RD_1; break;
-				case LEFT:
-					s=NECK_RL_1; break;
+					s=NECK_LD_1; break;
+				case RIGHT:
+					s=NECK_LR_1; break;
 				default:
 					throw erP;
 				}
@@ -69,12 +71,12 @@ void Snake::MakeMap(){
 			case DOWN:
 				switch(body[i].at(1))
 				{
-				case UP:
-					s=NECK_DU_1; break;
+				case DOWN:
+					s=NECK_UD_1; break;
 				case RIGHT:
-					s=NECK_DR_1; break;
+					s=NECK_UR_1; break;
 				case LEFT:
-					s=NECK_DL_1; break;
+					s=NECK_UL_1; break;
 				default:
 					throw erP;
 				}
@@ -83,11 +85,11 @@ void Snake::MakeMap(){
 				switch(body[i].at(1))
 				{
 				case UP:
-					s=NECK_LU_1; break;
-				case RIGHT:
-					s=NECK_LR_1; break;
+					s=NECK_RU_1; break;
+				case LEFT:
+					s=NECK_RL_1; break;
 				case DOWN:
-					s=NECK_LD_1; break;
+					s=NECK_RD_1; break;
 				default:
 					throw erP;
 				}
@@ -125,11 +127,11 @@ void Snake::MakeMap(){
 					switch(body[i].at(j))
 					{
 					case RIGHT:
-						s=BODY_UR; break;
-					case DOWN:
+						s=BODY_RD; break;
+					case UP:
 						s=BODY_UD; break;
 					case LEFT:
-						s=BODY_LU; break;
+						s=BODY_DL; break;
 					default:
 						throw erP;
 					}
@@ -138,10 +140,10 @@ void Snake::MakeMap(){
 					switch(body[i].at(j))
 					{
 					case UP:
-						s=BODY_UR; break;
+						s=BODY_LU; break;
 					case DOWN:
-						s=BODY_RD; break;
-					case LEFT:
+						s=BODY_DL; break;
+					case RIGHT:
 						s=BODY_RL; break;
 					default:
 						throw erP;
@@ -150,12 +152,12 @@ void Snake::MakeMap(){
 				case DOWN:
 					switch(body[i].at(j))
 					{
-					case UP:
+					case DOWN:
 						s=BODY_UD; break;
 					case RIGHT:
-						s=BODY_RD; break;
+						s=BODY_UR; break;
 					case LEFT:
-						s=BODY_DL; break;
+						s=BODY_LU; break;
 					default:
 						throw erP;
 					}
@@ -164,11 +166,11 @@ void Snake::MakeMap(){
 					switch(body[i].at(j))
 					{
 					case UP:
-						s=BODY_LU; break;
-					case RIGHT:
+						s=BODY_UR; break;
+					case LEFT:
 						s=BODY_RL; break;
 					case DOWN:
-						s=BODY_DL; break;
+						s=BODY_RD; break;
 					default:
 						throw erP;
 					}
@@ -181,13 +183,13 @@ void Snake::MakeMap(){
 				switch(body[i].at(j-1))
 				{
 				case UP:
-					s=TAIL_UD_1; break;
-				case RIGHT:
-					s=TAIL_RL_1; break;
-				case DOWN:
 					s=TAIL_DU_1; break;
-				case LEFT:
+				case RIGHT:
 					s=TAIL_LR_1; break;
+				case DOWN:
+					s=TAIL_UD_1; break;
+				case LEFT:
+					s=TAIL_RL_1; break;
 				}
 				map.at(Position(p)) = i ? static_cast<Section>(16+s) : s;
 			}
@@ -211,8 +213,8 @@ void Snake::MakeMap(){
 					++k;
 				}
 			}
-			square[i].x=k%w;
-			square[i].y=k/w;
+			square[i].x=(k-1)%w;
+			square[i].y=(k-1)/w;
 			map.at(Position(square[i]))=SQUARE;
 		}
 	}
@@ -228,12 +230,14 @@ void Snake::MakeMap(){
 void Snake::DoNextMove(){
 	bool doPenalty[2], tailBited=false;
 	doPenalty[0]=false;
-	doPenalty[1]=false; 
+	doPenalty[1]=false;
+	int grow[2];
+	grow[0]=0; grow[1]=0;
 	Point p;
 	Point newh[2];
 	Direction serverMove = *sMove, clientMove = *cMove;
-	newh[0]= serverMove!=body[0].front() ? CountNext(head[0], serverMove) : CountNext(head[0], Reverse(serverMove));
-	newh[1]= clientMove!=body[1].front() ? CountNext(head[1], clientMove) : CountNext(head[1], Reverse(clientMove));
+	newh[0]= serverMove!=body[0].front() ? CountNext(head[0], serverMove) : CountNext(head[0], serverMove=Reverse(serverMove));
+	newh[1]= clientMove!=body[1].front() ? CountNext(head[1], clientMove) : CountNext(head[1], clientMove=Reverse(clientMove));
 	
 	//Out of bounds
 	if (IsOutOfBounds(newh[0])) 
@@ -282,8 +286,8 @@ void Snake::DoNextMove(){
 			p=CountNext(newh[0],body[1].back());
 			if (!IsOutOfBounds(p) && (newh[1]!=square[0] || newh[1]!=square[1]) && map.at(Position(p))>=TAIL_LR_2 && map.at(Position(p))<=TAIL_DU_2 )
 			{
-				body[0].push_back(FREE);
-				body[1].pop_back();
+				grow[0]++;
+				grow[1]--;
 				tailBited=true;			// for resolving simultaneously bitten tails
 			}
 			else doPenalty[0]=true;
@@ -293,8 +297,8 @@ void Snake::DoNextMove(){
 			p=CountNext(newh[1],body[0].back());
 			if (!IsOutOfBounds(p) && (newh[0]!=square[0] || newh[0]!=square[1]) && map.at(Position(p))>=TAIL_LR_1 && map.at(Position(p))<=TAIL_DU_1 )
 			{
-				body[1].push_back(FREE);
-				body[0].pop_back();
+				grow[1]++;
+				grow[0]--;
 				if (tailBited)
 				{
 					doPenalty[0]=true;
@@ -307,13 +311,13 @@ void Snake::DoNextMove(){
 		//Bite tail
 		if (map.at(Position(newh[0]))>=TAIL_LR_2 && map.at(Position(newh[0]))<=TAIL_DU_2 && (newh[1]==square[0] || newh[1]==square[1]))
 		{
-			body[0].push_back(FREE);
-			body[1].pop_back();
+			grow[0]++;
+			grow[1]--;
 		}
-		else if (map.at(Position(newh[1]))>=TAIL_LR_2 && map.at(Position(newh[1]))<=TAIL_DU_2 && (newh[0]==square[0] || newh[0]==square[1]))
+		else if (map.at(Position(newh[1]))>=TAIL_LR_1 && map.at(Position(newh[1]))<=TAIL_DU_1 && (newh[0]==square[0] || newh[0]==square[1]))
 		{
-			body[1].push_back(FREE);
-			body[0].pop_back();
+			grow[1]++;
+			grow[0]--;
 		}
 	}
 
@@ -324,7 +328,7 @@ void Snake::DoNextMove(){
 		{
 			if (newh[snake]==square[sq])
 			{
-				body[snake].push_back(FREE);
+				grow[snake]++;
 				square[sq].Set(-1,-1);
 				currentSpeed+=acc;
 			}
@@ -332,10 +336,15 @@ void Snake::DoNextMove(){
 	}
 
 	//Move snakes
-	body[0].pop_back();
-	body[1].pop_back();
-	head[0]=newh[0];
-	head[1]=newh[1];
+	for (int i=0; i<2; ++i)
+	{
+		if (grow[i])
+		{
+			grow[i]>0 ? body[i].push_back(FREE) : body[i].pop_back();
+		}
+		body[i].pop_back();
+		head[i]=newh[i];
+	}
 	body[0].push_front(Reverse(serverMove));
 	body[1].push_front(Reverse(clientMove));
 	
@@ -357,22 +366,22 @@ void Snake::DoNextMove(){
 }
 
 void Snake::DoFinish(Section s){
-	map.clear();
-	map.push_back(s);
+	map.at(0)=s;
 	map.push_back(END);
-	serverOut->Send(&map[0],2);
+	serverOut->Send(&map[0],map.size());
 	gameFinished=s;
+	drawer->Draw(map);
 }
 
 
 Point Snake::CountNext(Point p, const Section &s) const{
 	switch (s) {
 	case UP:
-		p.y+=1; break;
+		p.y-=1; break;
 	case RIGHT:
 		p.x+=1; break;
 	case DOWN:
-		p.y-=1; break;
+		p.y+=1; break;
 	case LEFT:
 		p.x-=1; break;
 	default:
@@ -409,14 +418,28 @@ Direction Snake::Reverse(const Direction &d)const{
 }
 
 void Snake::GameLoop(){
-	gameFinished=FREE;
-	currentSpeed=speed;
+	StartSet();
 	drawer->Set(w,h,penalty,lenght);
 	int a[4]={w,h,penalty,lenght};
-	serverOut->Send(a,4);
-	while (!(*stopChecker || gameFinished)) {
+	try
+	{
+		serverOut->Send(&a[0],4);
+	} 
+	catch (...)
+	{
+		connection=false;
+	}
+	while (!*stopChecker && gameFinished==FREE && connection) {
 		MakeMap();
-		serverOut->Send(&map[0],map.size());
+		
+		try
+		{
+			serverOut->Send(&map[0],map.size());
+		} 
+		catch (...)
+		{
+			connection=false;
+		}
 
 		drawer->Draw(map);
 		SDL_Delay(60000/currentSpeed);
@@ -424,13 +447,13 @@ void Snake::GameLoop(){
 	}
 }
 
-void ServerReciever::Loop(){
-	while (!stopChecker && connection)
+void ServerReceiver::Loop(){
+	while (!*stopChecker && connection)
 	{
 		try 
 		{
-			serverIn->Recieve(message);
-			if(message.size()) cMove=message.front();
+			serverIn->ReceiveButton(message);
+			cMove=message;
 		} 
 		catch (...)
 		{

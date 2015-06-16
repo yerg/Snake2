@@ -16,10 +16,7 @@ public:
 	bool IsMouseButtonDown(byte key);
 	bool IsMouseButtonUp(byte key);
 	Point GetButtonDownCoords();
-
 	bool IsKeyDown(byte key);
-	bool IsKeyUp(byte key);
-	byte GetPressedKey();
 
 	bool IsExit();
 

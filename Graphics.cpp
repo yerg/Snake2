@@ -2,17 +2,17 @@
 
 Graphics::Graphics(int width, int height, const char *title)
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING)) std::cout<<std::endl<<"Failed to init SDL! SDL Error: "<<SDL_GetError();
+	if (SDL_Init(SDL_INIT_EVERYTHING)) throw std::string ("Failed to init SDL! SDL Error: ") + SDL_GetError();
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
 	mainWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,	width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 	
 	renderer = SDL_CreateRenderer(mainWindow, -1, 0);
 
-	if (TTF_Init()) std::cout<<std::endl<<"Failed to init SDL_ttf! SDL_ttf Error: "<<SDL_GetError();
+	if (TTF_Init()) throw std::string ("Failed to init SDL_ttf! SDL_ttf Error: ") + TTF_GetError() + SDL_GetError();
 	font=TTF_OpenFont("fonts/a_OldTyper.ttf",24);
-	if( font == NULL ) std::cout<< std::endl<<"Failed to load font! SDL_ttf Error: " << TTF_GetError();
+	if( font == NULL ) throw std::string("Failed to load font! SDL_ttf Error: ") + TTF_GetError();
 }
 
 Graphics::~Graphics(){
@@ -22,34 +22,12 @@ Graphics::~Graphics(){
 	SDL_Quit();
 }
 
-Image* Graphics::NewImage(char* file)
-{
-	SDL_Surface* tmp = IMG_Load(file);
-	if (tmp==NULL) {
-		std::string s="File \"";
-		s+=file;
-		s+="\" is not found or broken"; 
-		throw s.c_str();
-	}
-	Image* image = new Image();
-	image->texture = SDL_CreateTextureFromSurface(renderer, tmp);
-	image->h=tmp->h; 
-	image->w=tmp->w;
-	SDL_FreeSurface(tmp);
-	return image;
-}
-
 Image* Graphics::NewImage(char* file, int r, int g, int b)
 {
 	SDL_Surface* tmp = IMG_Load(file);
-	if (tmp==NULL) {
-		std::string s="File \"";
-		s+=file;
-		s+="\" is not found or broken"; 
-		throw s.c_str();
-	}
+	if (tmp==NULL) throw std::string ("File \"") + file + "\" is not found or broken"; 
 	Image* image = new Image();
-	SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, r, g, b));
+	if (r>=0) SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, r, g, b));
 	image->texture = SDL_CreateTextureFromSurface(renderer, tmp);
 	image->h=tmp->h;
 	image->w=tmp->w;
@@ -118,8 +96,8 @@ void Graphics::DestroyImage(Image* image){
 	SDL_DestroyTexture(image->texture);
 }
 
-void Graphics::GetWindowSize(int &w, int &h){
-	SDL_GetWindowSize(mainWindow, &w, &h);
+void Graphics::SetResolution(int w, int h){
+	SDL_SetWindowSize(mainWindow, w, h);
 }
 
 void Graphics::Flip()

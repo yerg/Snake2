@@ -47,16 +47,19 @@ void ServerScreen::LeftClick(){
 	}
 	else if(!started && make->CheckHit(coords)) 
 	{
-		game->CreateServer(width->value, height->value, lenght->value, penalty->value, speed->value, acceleration->value);
+		game->CreateServer(Settings(width->value, height->value, lenght->value, penalty->value, speed->value, acceleration->value));
 		started=true;
 		ReDraw();
 	}
-	else if (CheckHitSetter(acceleration));
-	else if (CheckHitSetter(height));
-	else if (CheckHitSetter(width));
-	else if (CheckHitSetter(speed));
-	else if (CheckHitSetter(lenght));
-	else CheckHitSetter(penalty);
+	else if (!started)
+	{
+		if (CheckHitSetter(acceleration));
+		else if (CheckHitSetter(height));
+		else if (CheckHitSetter(width));
+		else if (CheckHitSetter(speed));
+		else if (CheckHitSetter(lenght));
+		else CheckHitSetter(penalty);
+	}
 }
 
 bool ServerScreen::CheckHitSetter(shared_ptr<Setter> &setter){
@@ -106,6 +109,9 @@ void ServerScreen::InitSetter(shared_ptr<Setter> &setter, const wchar_t* text, i
 void ServerScreen::DrawSetter(shared_ptr<Setter> &setter){
 	Draw(setter->info);
 	Draw(setter->field);
-	Draw(setter->plus);
-	Draw(setter->minus);
+	if (!started)
+	{
+		Draw(setter->plus);
+		Draw(setter->minus);
+	}
 }

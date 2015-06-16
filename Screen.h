@@ -6,8 +6,6 @@
 #include "Input.h"
 #include "GuiElements.h"
 class Game;
-class Input;
-class Graphics;
 
 class Screen
 {
