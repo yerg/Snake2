@@ -83,7 +83,7 @@ bool Input::TextHandle(std::string &s){
 				textChanged = true;
 			}
 			time=evt.text.timestamp;
-			for(int i=1; i<=32; i++) if (evt.text.text[i]=='\0') {last=evt.text.text[i-1]; i=32;}
+			for(int i=1; i<32; i++) if (evt.text.text[i]=='\0') {last=evt.text.text[i-1]; i=32;}
 		} 
 	}
 	return textChanged;

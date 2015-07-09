@@ -36,16 +36,19 @@ catch (std::string &s)
 {
 	std::cout<<std::endl<<s<<std::endl<<"Press enter to exit...";
 	getchar();
+	return 1;
 }
 catch (const char * c)
 {
 	std::cout<<std::endl<<c<<std::endl<<"Press enter to exit...";
 	getchar();
+	return 1;
 }
 catch (...)
 {
 	std::cout<<std::endl<<"Unknown error"<<std::endl<<"Press enter to exit...";
 	getchar();
+	return 1;
 }
 
 void Game::SetScreen(shared_ptr<Screen> screen)
