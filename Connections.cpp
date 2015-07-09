@@ -8,10 +8,10 @@ void Connection::Send(int* data, size_t size){
 }
 
 void Connection::Receive(std::vector<Section> &data, int size){
-	shared_ptr<Section[]> buf(new Section [size*sizeof Section]);
+	shared_ptr<Section> buf(new Section [size*sizeof Section], std::default_delete<Section[]>());
 	int n;
 	n=sock->receive(buffer(buf.get(),size));
-	data.assign(*(buf.get()), *(buf.get()) + n*sizeof Section);
+	data.assign(buf.get(), buf.get() + n*sizeof Section);
 }
 void Connection::Receive(std::vector<int> &data){
 	int buf[4];
